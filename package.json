@@ -1,7 +1,7 @@
 {
-  "name": "sla-semeru",
+  "name": "summary-sla",
   "version": "1.0.0",
-  "description": "restapi get sla semeru",
+  "description": "summary of sla retrieve from semeru",
   "main": "server.js",
   "scripts": {
     "build": "tsc",
