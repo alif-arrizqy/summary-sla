@@ -2,7 +2,7 @@
   "name": "sla-semeru",
   "version": "1.0.0",
   "description": "restapi get sla semeru",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "build": "tsc",
     "dev": "npx nodemon ./server.ts",
