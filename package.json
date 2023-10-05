@@ -1,0 +1,33 @@
+{
+  "name": "sla-semeru",
+  "version": "1.0.0",
+  "description": "restapi get sla semeru",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "npx nodemon ./server.ts",
+    "start": "ts-node build/server.js"
+  },
+  "keywords": [
+    "sla",
+    "semeru",
+    "restapi",
+    "typescript"
+  ],
+  "author": "alif",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.14",
+    "@types/express": "^4.17.18",
+    "@types/node": "^20.8.2",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.1"
+  }
+}
