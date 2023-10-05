@@ -1,7 +1,6 @@
 import connection from "../database";
 import Sla from "../models/sla.model";
 import generateSlaHelper from "../helpers/generateSla.helper";
-import generateDateHelper from "../helpers/generateDate.helper";
 
 interface BaseModelsSlaRepository {
 	// interface method retrieveDate with parameter searchParams
