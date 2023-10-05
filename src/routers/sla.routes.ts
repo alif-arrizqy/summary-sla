@@ -10,7 +10,7 @@ class SlaRoutes {
   }
 
   intializeRoutes() {
-    this.router.get("/", this.controller.findOne);
+    this.router.get("/", this.controller.findSLA);
   }
 }
 

@@ -1,36 +1,34 @@
 import connection from "../database";
 import Sla from "../models/sla.model";
+import generateSlaHelper from "../helpers/generateSla.helper";
+import generateDateHelper from "../helpers/generateDate.helper";
 
 interface BaseModelsSlaRepository {
 	// interface method retrieveDate with parameter searchParams
 	// to retrieve data from database or models
-  retrieveDate(searchParams: {date: string}): Promise<Sla[]>;
+  retrieveDate(searchParams: {startDate: string, endDate: string}): Promise<Sla[]>;
 }
 
 class SlaRepository implements BaseModelsSlaRepository {
-	retrieveDate(searchParams: { date: string }): Promise<Sla[]> {
+	async retrieveDate(searchParams: { startDate: string, endDate: string }): Promise<Sla[]> {
 		
 		// query sql
-		let query: string = "SELECT * FROM sites_sla_semeru";
-		let condition: string = "";
-		
-		if (searchParams.date) condition += `date = '${searchParams.date}'`;
+		let query: string = "SELECT * FROM sites_sla_semeru WHERE date BETWEEN '" 
+		+ searchParams.startDate + "' AND '" + searchParams.endDate + "'";
 
-		if (condition.length) query += " WHERE " + condition;
-
-		// return promise resolve or reject
+		// return query
 		return new Promise((resolve, reject) => {
 			connection.query<Sla[]>(query, (err, res) => {
-				// if error reject
 				if (err) reject(err);
+				// else resolve(res);
 				else {
-					// if success resolve
-					// and edit date format
 					let data = JSON.parse(JSON.stringify(res));
-					data.forEach((element: any) => {
-						element.date = searchParams.date;
+					data.map((item: any) => {
+						// date format
+						const changeDate = new Date(item.date)
+						changeDate.setDate(changeDate.getDate() + 1);
+						item.date = changeDate.toISOString().split('T')[0];
 					});
-					// send response
 					resolve(data);
 				}
 			});

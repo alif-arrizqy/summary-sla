@@ -1,0 +1,78 @@
+[
+	{
+		"code": 200,
+		"status": "success",
+		"data": {
+			"average": {
+				"startDate": {
+					"date": "03/10/2023",
+					"value": 85.15
+				},
+				"endDate": {
+					"date": "04/10/2023",
+					"value": 84.23
+				}
+			},
+			"report": {
+				"reportDaily": {
+					"date": "04/10/2023",
+					"value": 0.92,
+					"message": "terdapat kenaikan dari periode sebelumnya"
+				},
+				"reportMonthly": {
+					"startDate": "01/04/2023",
+					"endDate": "04/10/2023",
+					"value": 84.46
+				}
+			},
+			"lessThan": [
+				{
+					"site": "site1",
+					"value": 99.3
+				},
+				{
+					"site": "site1",
+					"value": 99.3
+				},
+				{
+					"site": "site1",
+					"value": 99.3
+				}
+			],
+			"drop": [
+				{
+					"site": "site1",
+					"before": 99.3,
+					"after": 81.2
+				},
+				{
+					"site": "site1",
+					"before": 99.3,
+					"after": 81.2
+				},
+				{
+					"site": "site1",
+					"before": 99.3,
+					"after": 81.2
+				}
+			],
+			"increase": [
+				{
+					"site": "site1",
+					"before": 80.31,
+					"after": 81.2
+				},
+				{
+					"site": "site1",
+					"before": 99.33,
+					"after": 99.99
+				},
+				{
+					"site": "site1",
+					"before": 99.33,
+					"after": 99.66
+				}
+			]
+		}
+	}
+]

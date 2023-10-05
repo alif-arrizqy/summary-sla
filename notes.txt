@@ -1,0 +1,56 @@
+04/10/23 terdapat Kenaikan 0.92%
+03/10/23 84.23
+04/10/23 85.15
+SLA avg 01 - 04/10/23 84.86 = average SLA 01 - NOW-1
+
+SLA < 95.5
+explain:
+cari SLA < 95.5 yang dari hari sebelumnya (NOW-1)
+
+contoh:
+Durjela 71.18
+Waigai 67.43
+Kay II 0
+Sikari Baru 51.28
+Primapun 63.12
+Bagusa 0
+Kasweri Migori 0
+Nakai 0
+Anasi 0
+Suru Suru 0
+Nadofuai 0
+Yinudoba 85.07
+Wagamo 0
+
+Penurunan SLA
+explain:
+- cari site
+- cari sla dari hari sebelumnya (NOW-1)
+- cari sla dari 2 hari sebelumnya (NOW-2)
+- jika hari sebelumnya (NOW-1) lebih KECIL di bandingkan
+  dengan 2 hari sebelumnya (NOW-2) maka site tersebut mengalami Penurunan
+
+contoh:
+Serat 100 - 99.31
+Waigai 84.31 - 67.43
+Sikari Baru  62.96 - 51.28
+Skopro 100 - 99.65
+Yow 99.31 - 97.92
+Trimuris 100 - 99.65
+Yinudoba 91.37 - 85.07
+
+Kenaikan SLA
+explain:
+- cari site
+- cari sla dari hari sebelumnya (NOW-1)
+- cari sla dari 2 hari sebelumnya (NOW-2)
+- jika hari sebelumnya (NOW-1) lebih BESAR di bandingkan
+  dengan 2 hari sebelumnya (NOW-2) maka site tersebut mengalami kenaikan
+
+contoh:
+Air kumpai 95.83 - 100
+Durejela 70.49 - 71.18
+Kais Tapuri 98.96 - 100
+Serkos 71.96 - 100
+Primapun 0 - 63.12
+
