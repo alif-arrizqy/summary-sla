@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  retrieve-sla-semeru:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: retrieve-sla-semeru
+    restart: always
+    volumes:
+      - ./src:/app/src
+      - node_modules:/usr/src/app/node_modules
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - retrieve-sla-semeru-network
+
+networks:
+  retrieve-sla-semeru-network:
+
+volumes:
+  node_modules:
+  retrieve-sla-semeru-volume:
