@@ -45,7 +45,7 @@ class SlaRepository implements BaseModelsSlaRepository {
 						item.date = changeDate.toISOString().split("T")[0];
 					});
 					const result = generateSlaHelper.generateSummary(dates, data);
-					console.log(result);
+					// console.log(result);
 					resolve(result);
 				}
 			});
@@ -69,9 +69,10 @@ class SlaRepository implements BaseModelsSlaRepository {
 
 		// generate monthly report
 		const monthlyReport = await generateMonthlyReportHelper.monthlyReport(searchParams);
-		// console.log(monthlyReport);
 
 		return new Promise((resolve, reject) => {
+			const tempResultDaily: any[] = [];
+			
 			connection.query<Sla[]>(query, (err, res) => {
 				if (err) reject(err);
 				else {
@@ -82,15 +83,23 @@ class SlaRepository implements BaseModelsSlaRepository {
 						changeDate.setDate(changeDate.getDate() + 1);
 						item.date = changeDate.toISOString().split("T")[0];
 					});
-					const result = generateSlaHelper.generateReport(dates, data);
-					// resolve(result);
-					// add monthly report to result
-					const report: any = {
-						monthlyReport: monthlyReport,
-						dailyReport: result,
-					};
-					resolve(report);
+
+					const resultDailyReport = generateSlaHelper.generateReport(dates, data);
+					resultDailyReport.then((res) => {
+						// iterate object
+						Object.keys(res).forEach((key:any) => {
+							tempResultDaily.push(res[key]);
+						});
+					});
 				}
+				// response data
+				const sla: any = {
+					"report": {
+						"daily": tempResultDaily,
+						"monthly": monthlyReport
+					}
+				};
+				resolve(sla);
 			});
 		});
 	}
