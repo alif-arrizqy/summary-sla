@@ -14,21 +14,21 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 		const month = endDate.getMonth() + 1;
 		const year = endDate.getFullYear();
 		// create start date
-		const startDate:string = `${year}-${month}-01`;
-		
+		const startDate: string = `${year}-${month}-01`;
+
 		// generate date from startDate to endDate
 		const dates = generateDates(startDate, searchParams.endDate);
-		
+
 		// query sql
 		let query: string = `SELECT * FROM sites_sla_semeru WHERE date BETWEEN '${startDate}' AND '${searchParams.endDate}'`;
-		
+
 		return new Promise((resolve, reject) => {
+			const tempResultDaily: any[] = [];
+			const avgSla: number[] = [];
+
 			connection.query<Sla[]>(query, (err, res) => {
 				if (err) reject(err);
 				else {
-					const avgSla: Sla[] = [];
-					const tempReportMonthly: string[] = [];
-
 					let data = JSON.parse(JSON.stringify(res));
 					data.map((item: any) => {
 						// date format
@@ -36,33 +36,27 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 						changeDate.setDate(changeDate.getDate() + 1);
 						item.date = changeDate.toISOString().split("T")[0];
 					});
+
 					const resultMonth = generateSlaHelper.generateReport(dates, data);
-					const result: any[] = [];
 					resultMonth.then((res) => {
-						if (Array.isArray(res)) reject(res);
-						else {
-							// convert object to array
-							Object.keys(res).forEach((key) => {
-								result.push(res[key]);
-							});
-						}
-						// average sla
-						result.forEach((item) => {
-							item.forEach((data:any) => {
-								avgSla.push(data);
-							})
+						Object.keys(res).forEach((key: any) => {
+							tempResultDaily.push(res[key]);
+						});
+						// get value
+						tempResultDaily.forEach((item) => {
+							avgSla.push(item.value);
 						});
 						// average
-						const sumSla = avgSla.reduce((a, b) => a + (b.value as number), 0);
-						const avg = sumSla / avgSla.length;
+						const sum = avgSla.reduce((a, b) => a + b, 0);
+						const avg = (sum / avgSla.length).toFixed(2);
 						const sla: any = {
 							date: searchParams.endDate,
-							value: parseFloat(avg.toFixed(2)),
+							value: parseFloat(avg),
 						};
-						tempReportMonthly.push(sla);
-						resolve(tempReportMonthly);
+						resolve(sla);
 					});
 				}
+
 			});
 		});
 	}
