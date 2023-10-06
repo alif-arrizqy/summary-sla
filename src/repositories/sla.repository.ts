@@ -45,7 +45,6 @@ class SlaRepository implements BaseModelsSlaRepository {
 						item.date = changeDate.toISOString().split("T")[0];
 					});
 					const result = generateSlaHelper.generateSummary(dates, data);
-					// console.log(result);
 					resolve(result);
 				}
 			});
