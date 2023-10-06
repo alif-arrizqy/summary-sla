@@ -10,7 +10,15 @@ class SlaRoutes {
   }
 
   intializeRoutes() {
-    this.router.get("/", this.controller.findSLA);
+		// summary sla
+    this.router.get("/summary", this.controller.summarySLA);
+
+		// report sla
+		this.router.get("/report", this.controller.reportSLA);
+		
+		// detail sla
+		// this.router.get("/detail", this.controller.detailSLA);
+		
   }
 }
 
