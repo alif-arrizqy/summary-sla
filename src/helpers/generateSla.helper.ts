@@ -40,7 +40,7 @@ class GenerateSLA {
 		return new Promise((resolve, reject) => {
 			// create index and value of dates
 			const diff: number[] = [];
-			const tempReportDaily: object[] = [];
+			const tempReportDaily: Sla[] = [];
 
 			dates.forEach((date, index) => {
 				const avgSla: Sla[] = [];
@@ -86,10 +86,12 @@ class GenerateSLA {
 				};
 				tempReportDaily.push(sla);
 			});
-			const report:any = {
-				"reportDailly": tempReportDaily,
-			}
-			resolve(report);
+			resolve(tempReportDaily);
+
+			// const report:any = {
+			// 	"reportDailly": tempReportDaily,
+			// }
+			// resolve(report);
 		});
 	};
 }
