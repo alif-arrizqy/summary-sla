@@ -2,6 +2,7 @@ import connection from "../database";
 import Sla from "../models/sla.model";
 import generateSlaHelper from "../helpers/generateSla.helper";
 import generateDates from "../helpers/generateDate.helper";
+import generateMonthlyReportHelper from "../helpers/generateMonthlyReport.helper";
 
 interface BaseModelsSlaRepository {
 	// interface method retrieveSummary with parameter searchParams
@@ -66,6 +67,10 @@ class SlaRepository implements BaseModelsSlaRepository {
 		// generate date from startDate to endDate
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
 
+		// generate monthly report
+		const monthlyReport = await generateMonthlyReportHelper.monthlyReport(searchParams);
+		// console.log(monthlyReport);
+
 		return new Promise((resolve, reject) => {
 			connection.query<Sla[]>(query, (err, res) => {
 				if (err) reject(err);
@@ -78,8 +83,13 @@ class SlaRepository implements BaseModelsSlaRepository {
 						item.date = changeDate.toISOString().split("T")[0];
 					});
 					const result = generateSlaHelper.generateReport(dates, data);
-					console.log(result);
-					resolve(result);
+					// resolve(result);
+					// add monthly report to result
+					const report: any = {
+						monthlyReport: monthlyReport,
+						dailyReport: result,
+					};
+					resolve(report);
 				}
 			});
 		});

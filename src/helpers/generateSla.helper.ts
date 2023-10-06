@@ -1,4 +1,3 @@
-import { error } from "console";
 import Sla from "../models/sla.model";
 
 class GenerateSLA {
@@ -29,7 +28,7 @@ class GenerateSLA {
 				// push to data
 				const sla: any = {
 					date: dates[index],
-					sla: parseFloat(avg.toFixed(2)),
+					value: parseFloat(avg.toFixed(2)),
 				};
 				summary.push(sla);
 			});
@@ -82,7 +81,7 @@ class GenerateSLA {
 				// push to data
 				const sla: any = {
 					date: dates[index],
-					sla: parseFloat(avg.toFixed(2)),
+					value: parseFloat(avg.toFixed(2)),
 					message: message,
 				};
 				tempReportDaily.push(sla);
