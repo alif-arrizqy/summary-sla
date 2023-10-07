@@ -1,23 +1,23 @@
 version: '3.7'
 
 services:
-  retrieve-sla-semeru:
+  sla-summary:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: retrieve-sla-semeru
+    container_name: sla-summary
     restart: always
     volumes:
       - ./src:/app/src
       - node_modules:/usr/src/app/node_modules
     ports:
-      - "${PORT}:${PORT}"
+      - 3777:3777
     networks:
-      - retrieve-sla-semeru-network
+      - sla-summary-network
 
 networks:
-  retrieve-sla-semeru-network:
+  sla-summary-network:
 
 volumes:
   node_modules:
-  retrieve-sla-semeru-volume:
+  sla-summary-volume:
