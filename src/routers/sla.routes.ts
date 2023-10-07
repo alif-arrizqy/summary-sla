@@ -17,7 +17,7 @@ class SlaRoutes {
 		this.router.get("/report", this.controller.reportSLA);
 		
 		// detail sla
-		// this.router.get("/detail", this.controller.detailSLA);
+		this.router.get("/detail", this.controller.detailSLA);
 		
   }
 }

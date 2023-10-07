@@ -15,6 +15,10 @@ interface BaseModelsSlaRepository {
 		startDate: string;
 		endDate: string;
 	}): Promise<Sla[]>;
+	retrieveDetail(searchParams: {
+		startDate: string;
+		endDate: string;
+	}): Promise<Sla[]>;
 }
 
 class SlaRepository implements BaseModelsSlaRepository {
@@ -99,6 +103,49 @@ class SlaRepository implements BaseModelsSlaRepository {
 					}
 				};
 				resolve(sla);
+			});
+		});
+	}
+	
+	async retrieveDetail(searchParams: {
+		startDate: string;
+		endDate: string;
+	}): Promise<Sla[]> {
+		// query sql
+		let query: string =
+			"SELECT * FROM sites_sla_semeru WHERE date BETWEEN '" +
+			searchParams.startDate +
+			"' AND '" +
+			searchParams.endDate +
+			"'";
+
+				// generate date from startDate to endDate
+		const dates = generateDates(searchParams.startDate, searchParams.endDate);
+
+		return new Promise((resolve, reject) => {
+
+			connection.query<Sla[]>(query, (err, res) => {
+				if (err) reject(err);
+				else {
+					let data = JSON.parse(JSON.stringify(res));
+					data.map((item: any) => {
+						// date format
+						const changeDate = new Date(item.date);
+						changeDate.setDate(changeDate.getDate() + 1);
+						item.date = changeDate.toISOString().split("T")[0];
+					});
+
+					const resultDailyReport = generateSlaHelper.generateDetail(dates, data);
+					resultDailyReport.then((res) => {
+						resolve(res);
+						// // iterate object
+						// const tempResultDaily: any[] = [];
+						// Object.keys(res).forEach((key:any) => {
+						// 	tempResultDaily.push(res[key]);
+						// });
+						// resolve(tempResultDaily);
+					});
+				}
 			});
 		});
 	}
