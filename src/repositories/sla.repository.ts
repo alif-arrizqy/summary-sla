@@ -138,12 +138,6 @@ class SlaRepository implements BaseModelsSlaRepository {
 					const resultDailyReport = generateSlaHelper.generateDetail(dates, data);
 					resultDailyReport.then((res) => {
 						resolve(res);
-						// // iterate object
-						// const tempResultDaily: any[] = [];
-						// Object.keys(res).forEach((key:any) => {
-						// 	tempResultDaily.push(res[key]);
-						// });
-						// resolve(tempResultDaily);
 					});
 				}
 			});

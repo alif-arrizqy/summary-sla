@@ -88,11 +88,6 @@ class GenerateSLA {
 				tempReportDaily.push(sla);
 			});
 			resolve(tempReportDaily);
-
-			// const report:any = {
-			// 	"reportDailly": tempReportDaily,
-			// }
-			// resolve(report);
 		});
 	};
 }
