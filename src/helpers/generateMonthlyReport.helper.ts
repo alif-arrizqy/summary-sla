@@ -32,9 +32,12 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 					let data = JSON.parse(JSON.stringify(res));
 					data.map((item: any) => {
 						// date format
-						const changeDate = new Date(item.date);
-						changeDate.setDate(changeDate.getDate() + 1);
-						item.date = changeDate.toISOString().split("T")[0];
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
 					});
 
 					const resultMonth = generateSlaHelper.generateReport(dates, data);

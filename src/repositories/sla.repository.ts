@@ -44,9 +44,12 @@ class SlaRepository implements BaseModelsSlaRepository {
 					let data = JSON.parse(JSON.stringify(res));
 					data.map((item: any) => {
 						// date format
-						const changeDate = new Date(item.date);
-						changeDate.setDate(changeDate.getDate() + 1);
-						item.date = changeDate.toISOString().split("T")[0];
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
 					});
 					const result = generateSlaHelper.generateSummary(dates, data);
 					resolve(result);
@@ -82,9 +85,12 @@ class SlaRepository implements BaseModelsSlaRepository {
 					let data = JSON.parse(JSON.stringify(res));
 					data.map((item: any) => {
 						// date format
-						const changeDate = new Date(item.date);
-						changeDate.setDate(changeDate.getDate() + 1);
-						item.date = changeDate.toISOString().split("T")[0];
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
 					});
 
 					const resultDailyReport = generateSlaHelper.generateReport(dates, data);
@@ -130,9 +136,12 @@ class SlaRepository implements BaseModelsSlaRepository {
 					let data = JSON.parse(JSON.stringify(res));
 					data.map((item: any) => {
 						// date format
-						const changeDate = new Date(item.date);
-						changeDate.setDate(changeDate.getDate() + 1);
-						item.date = changeDate.toISOString().split("T")[0];
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
 					});
 
 					const resultDailyReport = generateSlaHelper.generateDetail(dates, data);
