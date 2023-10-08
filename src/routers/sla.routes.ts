@@ -20,7 +20,7 @@ class SlaRoutes {
 		this.router.get("/detail", this.controller.detailSLA);
 
 		// sla per site
-		this.router.get("/site-sla", this.controller.siteSLA);
+		this.router.get("/site-sla-daily", this.controller.siteSLA);
 
 		// sla per site per month
 		// this.router.get("/site-month", this.controller.siteSLAMonth);
