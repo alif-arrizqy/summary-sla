@@ -78,7 +78,7 @@ class SlaRepository implements BaseModelsSlaRepository {
 
 		return new Promise((resolve, reject) => {
 			const tempResultDaily: any[] = [];
-			
+
 			connection.query<Sla[]>(query, (err, res) => {
 				if (err) reject(err);
 				else {
@@ -103,16 +103,16 @@ class SlaRepository implements BaseModelsSlaRepository {
 				}
 				// response data
 				const sla: any = {
-					"report": {
-						"daily": tempResultDaily,
-						"monthly": monthlyReport
-					}
+					report: {
+						daily: tempResultDaily,
+						monthly: monthlyReport,
+					},
 				};
 				resolve(sla);
 			});
 		});
 	}
-	
+
 	async retrieveDetail(searchParams: {
 		startDate: string;
 		endDate: string;
@@ -125,11 +125,10 @@ class SlaRepository implements BaseModelsSlaRepository {
 			searchParams.endDate +
 			"'";
 
-				// generate date from startDate to endDate
+		// generate date from startDate to endDate
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
 
 		return new Promise((resolve, reject) => {
-
 			connection.query<Sla[]>(query, (err, res) => {
 				if (err) reject(err);
 				else {
@@ -148,6 +147,43 @@ class SlaRepository implements BaseModelsSlaRepository {
 					resultDailyReport.then((res) => {
 						resolve(res);
 					});
+				}
+			});
+		});
+	}
+
+	async retrieveSlaSite(searchParams: {
+		startDate: string;
+		endDate: string;
+		site: string;
+	}): Promise<Sla[]> {
+		// query sql
+		let query: string =
+			"SELECT * FROM sites_sla_semeru WHERE date BETWEEN '" +
+			searchParams.startDate +
+			"' AND '" +
+			searchParams.endDate +
+			"'" + " AND sites = '" + searchParams.site + "'";
+
+		// generate date from startDate to endDate
+		const dates = generateDates(searchParams.startDate, searchParams.endDate);
+
+		return new Promise((resolve, reject) => {
+			connection.query<Sla[]>(query, (err, res) => {
+				if (err) reject(err);
+				else {
+					let data = JSON.parse(JSON.stringify(res));
+					data.map((item: any) => {
+						// date format
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
+					});
+					const result = generateSlaHelper.generateSlaSite(dates, data);
+					resolve(result);
 				}
 			});
 		});

@@ -18,6 +18,12 @@ class SlaRoutes {
 		
 		// detail sla
 		this.router.get("/detail", this.controller.detailSLA);
+
+		// sla per site
+		this.router.get("/site-sla", this.controller.siteSLA);
+
+		// sla per site per month
+		// this.router.get("/site-month", this.controller.siteSLAMonth);
 		
   }
 }

@@ -91,7 +91,6 @@ class GenerateSLA {
 	};
 
 	generateDetail = (dates: string[], data: Sla[]): Promise<Sla[]> => {
-		
 		return new Promise((resolve, reject) => {
 			const underSla: any[] = [];
 			const dropSla: any[] = [];
@@ -121,7 +120,7 @@ class GenerateSLA {
 							const _underSla: object = {
 								date: item.date,
 								sla: item.sla,
-								site: item.sites
+								site: item.sites,
 							};
 							underSla.push(_underSla);
 						}
@@ -134,7 +133,7 @@ class GenerateSLA {
 					if (dates[index] === item.date?.toString()) {
 						separateByDate.push(item);
 					}
-				})
+				});
 
 				// bandingkan tanggal sebelumnya dengan tanggal sekarang
 				if (index > 0) {
@@ -168,7 +167,6 @@ class GenerateSLA {
 								};
 								upSla.push(_temp);
 							}
-
 						});
 					});
 				}
@@ -178,8 +176,45 @@ class GenerateSLA {
 				underSla: underSla,
 				dropSla: dropSla,
 				upSla: upSla,
-				};
+			};
 			resolve(sla);
+		});
+	};
+
+	generateSlaSite = (dates: string[], data: Sla[]): Promise<Sla[]> => {
+		return new Promise((resolve, reject) => {
+			// create index and value of dates
+			const summary: any[] = [];
+
+			dates.forEach((date, index) => {
+				const avgSla: Sla[] = [];
+				data.forEach((item) => {
+					if (dates[index] === item.date?.toString()) {
+						if ((item.sla as number) < 1) {
+							const sla: number = parseFloat(
+								((item.sla as number) * 100).toFixed(2)
+							);
+							item.sla = sla;
+						} else {
+							const sla: number = (item.sla as number) * 100;
+							item.sla = sla;
+						}
+						avgSla.push(item);
+					}
+				});
+
+				// calculate average
+				const sumSla = avgSla.reduce((a, b) => a + (b.sla as number), 0);
+				const avg = sumSla / avgSla.length;
+
+				// push to data
+				const sla: any = {
+					date: dates[index],
+					value: parseFloat(avg.toFixed(2)),
+				};
+				summary.push(sla);
+			});
+			resolve(summary);
 		});
 	};
 }
