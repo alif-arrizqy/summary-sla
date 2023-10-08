@@ -159,4 +159,37 @@ export default class SlaController {
 		}
 	}
 
+	async siteSLAMonth(req: Request, res: Response) {
+
+		// Validate request
+		const month = typeof req.query.month === "string" ? req.query.month : "";
+		const year = typeof req.query.year === "string" ? req.query.year : "";
+		const site = typeof req.query.site === "string" ? req.query.site : "";
+
+		// upper case site
+		const siteUpperCase = site.toUpperCase();
+
+		try {
+			const result = await slaRepository.retrieveSlaSiteMonth({ month: month, year: parseInt(year), site: siteUpperCase });
+			if (result)
+				res.status(200).send({
+					code: 200,
+					success: true,
+					data: result,
+				});
+			else
+				res.status(404).send({
+					code: 404,
+					success: false,
+					message: `Cannot find Sla with month=${month} and year=${year}.`,
+				});
+		} catch (err) {
+			res.status(500).send({
+				code: 500,
+				success: false,
+				message: `Error retrieving Sla with month=${month} and year=${year}.`,
+			});
+		}
+	}
+
 }

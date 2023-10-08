@@ -96,7 +96,7 @@ class SlaRepository implements BaseModelsSlaRepository {
 					const resultDailyReport = generateSlaHelper.generateReport(dates, data);
 					resultDailyReport.then((res) => {
 						// iterate object
-						Object.keys(res).forEach((key:any) => {
+						Object.keys(res).forEach((key: any) => {
 							tempResultDaily.push(res[key]);
 						});
 					});
@@ -186,6 +186,22 @@ class SlaRepository implements BaseModelsSlaRepository {
 					resolve(result);
 				}
 			});
+		});
+	}
+
+	async retrieveSlaSiteMonth(searchParams: {
+		month: string;
+		year: number;
+		site: string;
+	}): Promise<Sla[]> {
+		// find end date of month
+		const findEndDate = new Date(searchParams.year, parseInt(searchParams.month), 0).getDate();
+		const endDate = `${searchParams.year}-${searchParams.month}-${findEndDate}`;
+
+		// generate monthly report
+		const slaMonthlyReport = await generateMonthlyReportHelper.siteMonthlyReport(endDate, searchParams.site);
+		return new Promise((resolve, reject) => {
+			resolve(slaMonthlyReport);
 		});
 	}
 }
