@@ -7,11 +7,15 @@ services:
       dockerfile: Dockerfile
     container_name: sla-summary
     restart: always
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
     volumes:
       - ./src:/app/src
       - node_modules:/usr/src/app/node_modules
     ports:
-      - 3777:3777
+      - "${PORT}:${PORT}"
     networks:
       - sla-summary-network
 
