@@ -4,7 +4,7 @@
   "description": "summary of sla retrieve from semeru",
   "main": "server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p .",
     "dev": "npx nodemon ./server.ts",
     "start": "ts-node build/server.js"
   },
