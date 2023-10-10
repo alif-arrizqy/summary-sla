@@ -147,12 +147,10 @@ class GenerateSLA {
 					// compare
 					tempBefore.forEach((item) => {
 						separateByDate.forEach((element) => {
-							// if sla before > sla now
-							// if (item.sites === element.sites && item.sla > element.sla) {
 							if (item.sites === element.sites) {
 								if (item.sla > 95.5 && element.sla > 95.5) {
-									console.log('kosng');
-								} else {
+									// skip
+								} else if (item.sla > element.sla) {
 									const _temp: any = {
 										date: element.date,
 										site: item.sites,
@@ -160,17 +158,15 @@ class GenerateSLA {
 										slaNow: element.sla,
 									};
 									dropSla.push(_temp);
+								} else if (item.sla < element.sla) {
+									const _temp: any = {
+										date: element.date,
+										site: item.sites,
+										slaBefore: item.sla,
+										slaNow: element.sla,
+									};
+									upSla.push(_temp);
 								}
-							}
-							// if sla before < sla now
-							if (item.sites === element.sites && item.sla < element.sla) {
-								const _temp: any = {
-									date: element.date,
-									site: item.sites,
-									slaBefore: item.sla,
-									slaNow: element.sla,
-								};
-								upSla.push(_temp);
 							}
 						});
 					});
