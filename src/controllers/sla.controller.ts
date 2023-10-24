@@ -203,7 +203,7 @@ export default class SlaController {
 		}
 
 		try {
-			const dataSla: Sla = req.body;
+			const dataSla: Sla = req.body.data;
 			const response = await slaRepository.insertSlaSemeru(dataSla);
 			res.status(201).send({
 				code: 201,
