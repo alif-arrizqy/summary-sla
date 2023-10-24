@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import slaRepository from "../repositories/sla.repository";
 import DateValidation from "../helpers/validation.helper";
+import Sla from "../models/sla.model";
 
 export default class SlaController {
 	async summarySLA(req: Request, res: Response) {
@@ -192,4 +193,29 @@ export default class SlaController {
 		}
 	}
 
+	async postSlaSemeru(req: Request, res: Response) {
+		if (!req.body) {
+			res.status(400).send({
+				code: 400,
+				success: false,
+				message: "Content can not be empty!",
+			});
+		}
+
+		try {
+			const dataSla: Sla = req.body;
+			const response = await slaRepository.insertSlaSemeru(dataSla);
+			res.status(201).send({
+				code: 201,
+				success: true,
+				data: response,
+			});
+		} catch (err) {
+			res.status(500).send({
+				code: 500,
+				success: false,
+				message: "Failed to insert data sla semeru",
+			});
+		}
+	}
 }

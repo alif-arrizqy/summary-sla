@@ -10,6 +10,9 @@ class SlaRoutes {
   }
 
   intializeRoutes() {
+		// post sla semeru
+		this.router.post("/create-sla-semeru", this.controller.postSlaSemeru);
+
 		// summary sla
     this.router.get("/summary", this.controller.summarySLA);
 

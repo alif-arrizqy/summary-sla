@@ -19,6 +19,7 @@ interface BaseModelsSlaRepository {
 		startDate: string;
 		endDate: string;
 	}): Promise<Sla[]>;
+	insertSlaSemeru(sla: Sla): Promise<Sla>;
 }
 
 class SlaRepository implements BaseModelsSlaRepository {
@@ -202,6 +203,37 @@ class SlaRepository implements BaseModelsSlaRepository {
 		const slaMonthlyReport = await generateMonthlyReportHelper.siteMonthlyReport(endDate, searchParams.site);
 		return new Promise((resolve, reject) => {
 			resolve(slaMonthlyReport);
+		});
+	}
+
+	async insertSlaSemeru(sla: Sla): Promise<Sla> {
+		return new Promise((resolve, reject) => {
+			sla.map((item: any) => {
+				const date = new Date(item.date);
+				const dateLocal = new Date(
+					date.getTime() - date.getTimezoneOffset() * 60000
+				);
+				item.date = dateLocal.toISOString().split("T")[0];
+				connection.query(
+					"INSERT INTO sites_sla_semeru (site_id, date, sites, sla, log_harian) VALUES (?,?,?,?,?)",
+					[
+						item.site_id,
+						item.date,
+						item.sites,
+						item.sla,
+						item.log_harian,
+					],
+					(err, res) => {
+						if (err) reject(err);
+						else {
+							const responseObj:any = {
+								"message": "Sla Semeru successfully added"
+							}
+							resolve(responseObj);
+						}
+					}
+				);
+			});
 		});
 	}
 }
