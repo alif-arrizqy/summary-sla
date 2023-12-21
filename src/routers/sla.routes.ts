@@ -28,7 +28,9 @@ class SlaRoutes {
 		// sla per site per month
 		this.router.get("/site-sla-monthly", this.controller.siteSLAMonth);
 		
-  }
+		// delete sla per date
+		this.router.delete("/delete", this.controller.deleteSLADate);
+	}
 }
 
 export default new SlaRoutes().router;

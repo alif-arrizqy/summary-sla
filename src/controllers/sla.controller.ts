@@ -218,4 +218,30 @@ export default class SlaController {
 			});
 		}
 	}
+
+	async deleteSLADate(req: Request, res: Response) {
+		const deleteDate = typeof req.query.deleteDate === "string" ? req.query.deleteDate : "";
+
+		try {
+			const sla = await slaRepository.deleteSLADate({ deleteDate: deleteDate })
+			if (sla)
+				res.status(200).send({
+					code: 200,
+					success: true,
+					data: sla,
+				});
+			else
+				res.status(404).send({
+					code: 404,
+					success: false,
+					message: `Cannot find Sla with date=${deleteDate}.`,
+				});
+		} catch (err) {
+			res.status(500).send({
+				code: 500,
+				success: false,
+				message: `Error retrieving Sla with date=${deleteDate}.`,
+			});
+		}
+	}
 }

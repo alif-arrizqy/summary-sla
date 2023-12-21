@@ -20,6 +20,9 @@ interface BaseModelsSlaRepository {
 		endDate: string;
 	}): Promise<Sla[]>;
 	insertSlaSemeru(sla: Sla): Promise<Sla>;
+	deleteSLADate(searchParams: {
+		deleteDate: string;
+	}): Promise<Sla[]>;
 }
 
 class SlaRepository implements BaseModelsSlaRepository {
@@ -233,6 +236,28 @@ class SlaRepository implements BaseModelsSlaRepository {
 						}
 					}
 				);
+			});
+		});
+	}
+
+	async deleteSLADate(searchParams: {
+		deleteDate: string;
+	}): Promise<Sla[]> {
+		// query sql
+		let query: string =
+			"DELETE FROM sites_sla_semeru WHERE date = '" +
+			searchParams.deleteDate +
+			"'";
+		
+		return new Promise((resolve, reject) => {
+			connection.query<Sla[]>(query, (err, res) => {
+				if (err) reject(err);
+				else {
+					const responseObj:any = {
+						"message": "Sla Semeru successfully deleted"
+					}
+					resolve(responseObj);
+				}
 			});
 		});
 	}
