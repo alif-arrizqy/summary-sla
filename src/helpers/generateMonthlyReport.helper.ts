@@ -66,16 +66,16 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 	async siteMonthlyReport(endDate: string, site: string): Promise<Sla[]> {
 		// get month and year from endDate
 		const endOfDate = new Date(endDate);
-		const month = endOfDate.getMonth() + 1;
+		const month = (endOfDate.getMonth() + 1).toString().padStart(2, "0");
 		const year = endOfDate.getFullYear();
 		// create start date
 		const startDate: string = `${year}-${month}-01`;
 
 		// generate date from startDate to endDate
-		const dates = generateDates(startDate, endOfDate.toISOString().split("T")[0]);
+		const dates = generateDates(startDate, endDate);
 
 		// query sql
-		let query: string = `SELECT * FROM sites_sla_semeru WHERE date BETWEEN '${startDate}' AND '${endOfDate.toISOString().split("T")[0]}' AND sites = '${site}'`;
+		let query: string = `SELECT * FROM sites_sla_semeru WHERE date BETWEEN '${startDate}' AND '${endDate}' AND sites = '${site}'`;
 
 		return new Promise((resolve, reject) => {
 			const tempResultDaily: any[] = [];
