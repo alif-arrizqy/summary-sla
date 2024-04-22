@@ -11,7 +11,7 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 	async monthlyReport(searchParams: { endDate: string }): Promise<Sla[]> {
 		// get month and year from endDate
 		const endDate = new Date(searchParams.endDate);
-		const month = endDate.getMonth() + 1;
+		const month = (endDate.getMonth() + 1).toString().padStart(2, "0");
 		const year = endDate.getFullYear();
 		// create start date
 		const startDate: string = `${year}-${month}-01`;
