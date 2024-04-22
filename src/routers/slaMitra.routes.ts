@@ -11,6 +11,8 @@ class SlaRoutes {
 
 	intializeRoutes() {
 		this.router.get("/summary", this.controller.summarySLAMitra);
+
+		this.router.get("/report", this.controller.reportSLAMitra);
 	}
 }
 

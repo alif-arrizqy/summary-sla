@@ -119,6 +119,66 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 			});
 		});
 	}
+
+	async mitraMonthlyReport(endDate: string, provinsi: string): Promise<Sla[]> {
+		// get month and year from endDate
+		const endOfDate = new Date(endDate);
+		const month = (endOfDate.getMonth() + 1).toString().padStart(2, "0");
+		const year = endOfDate.getFullYear();
+
+		// create start date
+		const startDate: string = `${year}-${month}-01`;
+
+		// generate date from startDate to endDate
+		const dates = generateDates(startDate, endDate);
+
+		// query sql
+		let query: string =
+			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, detail_site.provinsi` +
+			` FROM sites_sla_semeru as sla_semeru INNER JOIN detail_site` +
+			` ON sla_semeru.sites = detail_site.site_name` +
+			` WHERE provinsi LIKE '${provinsi}%' AND date BETWEEN '${startDate}' AND '${endDate}'`;
+
+		return new Promise((resolve, reject) => {
+			const tempResultDaily: any[] = [];
+			const avgSla: number[] = [];
+
+			connection.query<Sla[]>(query, (err, res) => {
+				if (err) reject(err);
+				else {
+					let data = JSON.parse(JSON.stringify(res));
+					data.map((item: any) => {
+						// date format
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
+					});
+
+					const resultMonth = generateSlaHelper.generateReport(dates, data);
+					resultMonth.then((res) => {
+						Object.keys(res).forEach((key: any) => {
+							tempResultDaily.push(res[key]);
+						});
+						// get value
+						tempResultDaily.forEach((item) => {
+							avgSla.push(item.value);
+						});
+						// average
+						const sum = avgSla.reduce((a, b) => a + b, 0);
+						const avg = (sum / avgSla.length).toFixed(2);
+						const sla: any = {
+							date: endDate,
+							value: parseFloat(avg),
+						};
+						resolve(sla);
+					});
+				}
+			});
+		});
+	}
 }
 
 export default new SlaMonthlyReport();
