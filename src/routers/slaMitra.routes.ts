@@ -13,6 +13,8 @@ class SlaRoutes {
 		this.router.get("/summary", this.controller.summarySLAMitra);
 
 		this.router.get("/report", this.controller.reportSLAMitra);
+
+		this.router.get("/detail", this.controller.detailSLAMitra);
 	}
 }
 
