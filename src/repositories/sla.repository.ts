@@ -78,7 +78,9 @@ class SlaRepository implements BaseModelsSlaRepository {
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
 
 		// generate monthly report
-		const monthlyReport = await generateMonthlyReportHelper.monthlyReport(searchParams);
+		const monthlyReport = await generateMonthlyReportHelper.monthlyReport(
+			searchParams
+		);
 
 		return new Promise((resolve, reject) => {
 			const tempResultDaily: any[] = [];
@@ -97,7 +99,10 @@ class SlaRepository implements BaseModelsSlaRepository {
 						item.date = dateLocal.toISOString().split("T")[0];
 					});
 
-					const resultDailyReport = generateSlaHelper.generateReport(dates, data);
+					const resultDailyReport = generateSlaHelper.generateReport(
+						dates,
+						data
+					);
 					resultDailyReport.then((res) => {
 						// iterate object
 						Object.keys(res).forEach((key: any) => {
@@ -167,7 +172,10 @@ class SlaRepository implements BaseModelsSlaRepository {
 			searchParams.startDate +
 			"' AND '" +
 			searchParams.endDate +
-			"'" + " AND sites = '" + searchParams.site + "'";
+			"'" +
+			" AND sites = '" +
+			searchParams.site +
+			"'";
 
 		// generate date from startDate to endDate
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
@@ -199,11 +207,19 @@ class SlaRepository implements BaseModelsSlaRepository {
 		site: string;
 	}): Promise<Sla[]> {
 		// find end date of month
-		const findEndDate = new Date(searchParams.year, parseInt(searchParams.month), 0).getDate();
+		const findEndDate = new Date(
+			searchParams.year,
+			parseInt(searchParams.month),
+			0
+		).getDate();
 		const endDate = `${searchParams.year}-${searchParams.month}-${findEndDate}`;
 
 		// generate monthly report
-		const slaMonthlyReport = await generateMonthlyReportHelper.siteMonthlyReport(endDate, searchParams.site);
+		const slaMonthlyReport =
+			await generateMonthlyReportHelper.siteMonthlyReport(
+				endDate,
+				searchParams.site
+			);
 		return new Promise((resolve, reject) => {
 			resolve(slaMonthlyReport);
 		});
@@ -231,9 +247,9 @@ class SlaRepository implements BaseModelsSlaRepository {
 					(err, res) => {
 						if (err) reject(err);
 						else {
-							const responseObj:any = {
-								"message": "Sla Semeru successfully added"
-							}
+							const responseObj: any = {
+								message: "Sla Semeru successfully added",
+							};
 							resolve(responseObj);
 						}
 					}
@@ -263,6 +279,38 @@ class SlaRepository implements BaseModelsSlaRepository {
 			});
 		});
 	}
+
+	getCountDowntime = (
+		startDate: string,
+		endDate: string,
+		site: string
+	): Promise<number> => {
+		return new Promise((resolve, reject) => {
+			const query: string = `SELECT * FROM sites_sla_semeru 
+			WHERE date BETWEEN '${startDate}' AND '${endDate}' 
+			AND sites = '${site}' ORDER BY date DESC`;
+
+			connection.query<Sla[]>(query, (err, res) => {
+				if (err) reject(err);
+				else {
+					let data = JSON.parse(JSON.stringify(res));
+					data.map((item: any) => {
+						delete item.id;
+						delete item.date;
+						delete item.site_id;
+						delete item.log_harian;
+						delete item.downtime_percent;
+						delete item.uptime_percent;
+					});
+
+					// count total downtime sla
+					const count = data.findIndex((item: any) => item.sla !== 0);
+					const totalDowntime = count === -1 ? data.length : count;
+					resolve(totalDowntime);
+				}
+			});
+		});
+	};
 }
 
 export default new SlaRepository();
