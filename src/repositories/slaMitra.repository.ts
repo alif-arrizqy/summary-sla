@@ -1,7 +1,7 @@
 import connection from "../database";
 import Sla from "../models/sla.model";
 import generateSlaHelper from "../helpers/generateSla.helper";
-import generateDates from "../helpers/generateDate.helper";
+import { generateDates } from "../helpers/generateDate.helper";
 import generateMonthlyReportHelper from "../helpers/generateMonthlyReport.helper";
 
 interface BaseModelsSlaMitrasRepository {

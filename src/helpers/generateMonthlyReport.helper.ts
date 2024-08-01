@@ -1,6 +1,6 @@
 import connection from "../database";
 import Sla from "../models/sla.model";
-import generateDates from "../helpers/generateDate.helper";
+import { generateDates } from "../helpers/generateDate.helper";
 import generateSlaHelper from "./generateSla.helper";
 
 interface BaseMonthlyReportRepository {

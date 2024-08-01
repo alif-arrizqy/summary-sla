@@ -1,7 +1,7 @@
 import connection from "../database";
 import Sla from "../models/sla.model";
 import generateSlaHelper from "../helpers/generateSla.helper";
-import generateDates from "../helpers/generateDate.helper";
+import { generateDates } from "../helpers/generateDate.helper";
 import generateMonthlyReportHelper from "../helpers/generateMonthlyReport.helper";
 
 interface BaseModelsSlaRepository {
@@ -218,13 +218,15 @@ class SlaRepository implements BaseModelsSlaRepository {
 				);
 				item.date = dateLocal.toISOString().split("T")[0];
 				connection.query(
-					"INSERT INTO sites_sla_semeru (site_id, date, sites, sla, log_harian) VALUES (?,?,?,?,?)",
+					"INSERT INTO sites_sla_semeru (site_id, date, sites, sla, log_harian, downtime_percent, uptime_percent) VALUES (?,?,?,?,?,?,?)",
 					[
 						item.site_id,
 						item.date,
 						item.sites,
 						item.sla,
 						item.log_harian,
+						item.downtime,
+						item.uptime,
 					],
 					(err, res) => {
 						if (err) reject(err);
