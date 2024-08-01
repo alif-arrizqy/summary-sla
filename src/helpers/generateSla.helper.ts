@@ -1,4 +1,5 @@
 import Sla from "../models/sla.model";
+import { generateTimeFormat } from "./generateDate.helper";
 
 class GenerateSLA {
 	generateSummary = (dates: string[], data: Sla[]): Promise<Sla[]> => {
@@ -92,6 +93,7 @@ class GenerateSLA {
 
 	generateDetail = (dates: string[], data: Sla[]): Promise<Sla[]> => {
 		return new Promise((resolve, reject) => {
+			const downSla: any[] = [];
 			const underSla: any[] = [];
 			const dropSla: any[] = [];
 			const upSla: any[] = [];
@@ -116,16 +118,36 @@ class GenerateSLA {
 				// check if sla < 95.5 in last of dates
 				if (index === dates.length - 1) {
 					newSla.forEach((item) => {
-						if ((item.sla as number) < 95.5) {
+						if ((item.sla as number) < 95.5 && (item.sla as number) > 0) {
 							const _underSla: object = {
+								date: item.date,
+								sla: item.sla,
+								downtime: item.downtime_percent,
+								site: item.sites,
+							};
+							underSla.push(_underSla);
+						} 
+						if ((item.sla as number) === 0) {
+							const _downSla: object = {
 								date: item.date,
 								sla: item.sla,
 								site: item.sites,
 							};
-							underSla.push(_underSla);
+							downSla.push(_downSla);
 						}
 					});
 				}
+
+				// add times description in underSla using format time
+				underSla.map((item) => {
+						const desc = generateTimeFormat(item.downtime);
+						// update item.downtime
+						Object.assign(
+							item,
+							{ downtime: desc }
+						)
+					}
+				)
 
 				const separateByDate: any[] = [];
 				// site have drop sla now but before not
@@ -174,6 +196,7 @@ class GenerateSLA {
 			});
 
 			const sla: any = {
+				downSla: downSla,
 				underSla: underSla,
 				dropSla: dropSla,
 				upSla: upSla,
