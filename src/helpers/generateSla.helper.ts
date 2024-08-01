@@ -142,7 +142,6 @@ class GenerateSLA {
 				const results = await Promise.all(
 					downSla.map(async (item) => {
 						const weekDate = getPreviousWeeksDate(item.date);
-						console.log(weekDate, item.date, item.site);
 						const countDowntime = await slaRepository.getCountDowntime(
 							weekDate,
 							item.date,
