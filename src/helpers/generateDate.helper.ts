@@ -18,4 +18,10 @@ const generateTimeFormat = (downtime: number): string => {
 	return `${hours} jam ${minutes} menit`;
 };
 
-export { generateDates, generateTimeFormat };
+const getPreviousWeeksDate = (date: string): string => {
+	const dateObj = new Date(date);
+	dateObj.setDate(dateObj.getDate() - 7);
+	return dateObj.toISOString().split("T")[0];
+}
+
+export { generateDates, generateTimeFormat, getPreviousWeeksDate };
