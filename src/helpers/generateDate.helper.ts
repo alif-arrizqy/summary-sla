@@ -8,5 +8,14 @@ const generateDates = (startDate: string, endDate: string): string[] => {
 		dateStart.setDate(dateStart.getDate() + 1);
 	}
 	return dates;
-}
-export default generateDates;
+};
+
+const generateTimeFormat = (downtime: number): string => {
+	const downtimeHours = (downtime / 100) * 24;
+
+	const hours = Math.floor(downtimeHours);
+	const minutes = Math.round((downtimeHours - hours) * 60);
+	return `${hours} jam ${minutes} menit`;
+};
+
+export { generateDates, generateTimeFormat };
