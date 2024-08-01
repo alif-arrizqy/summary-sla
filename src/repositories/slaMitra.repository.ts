@@ -33,7 +33,7 @@ class SlaMitraRepository implements BaseModelsSlaMitrasRepository {
 
 		// query sql
 		let query: string =
-			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, detail_site.provinsi` +
+			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, sla_semeru.downtime_percent, detail_site.provinsi` +
 			` FROM sites_sla_semeru as sla_semeru INNER JOIN detail_site` +
 			` ON sla_semeru.sites = detail_site.site_name` +
 			` WHERE provinsi LIKE '${provinsi}%' AND date BETWEEN '${searchParams.startDate}' AND '${searchParams.endDate}'`;
@@ -76,7 +76,7 @@ class SlaMitraRepository implements BaseModelsSlaMitrasRepository {
 
 		// query sql
 		let query: string =
-			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, detail_site.provinsi` +
+			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, sla_semeru.downtime_percent, detail_site.provinsi` +
 			` FROM sites_sla_semeru as sla_semeru INNER JOIN detail_site` +
 			` ON sla_semeru.sites = detail_site.site_name` +
 			` WHERE provinsi LIKE '${provinsi}%' AND date BETWEEN '${searchParams.startDate}' AND '${searchParams.endDate}'`;
@@ -145,7 +145,7 @@ class SlaMitraRepository implements BaseModelsSlaMitrasRepository {
 
 		// query sql
 		let query: string =
-			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, detail_site.provinsi` +
+			`SELECT sla_semeru.date, sla_semeru.sites, sla_semeru.sla, sla_semeru.downtime_percent, detail_site.provinsi` +
 			` FROM sites_sla_semeru as sla_semeru INNER JOIN detail_site` +
 			` ON sla_semeru.sites = detail_site.site_name` +
 			` WHERE provinsi LIKE '${provinsi}%' AND date BETWEEN '${searchParams.startDate}' AND '${searchParams.endDate}'`;
