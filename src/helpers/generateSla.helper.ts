@@ -1,5 +1,9 @@
 import Sla from "../models/sla.model";
-import { generateTimeFormat } from "./generateDate.helper";
+import {
+	generateTimeFormat,
+	getPreviousWeeksDate,
+} from "./generateDate.helper";
+import slaRepository from "../repositories/sla.repository";
 
 class GenerateSLA {
 	generateSummary = (dates: string[], data: Sla[]): Promise<Sla[]> => {
@@ -92,25 +96,23 @@ class GenerateSLA {
 	};
 
 	generateDetail = (dates: string[], data: Sla[]): Promise<Sla[]> => {
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			const downSla: any[] = [];
 			const underSla: any[] = [];
 			const dropSla: any[] = [];
 			const upSla: any[] = [];
+			const newDownSla: any[] = [];
 
-			dates.forEach((date, index) => {
+			for (let index = 0; index < dates.length; index++) {
 				const newSla: Sla[] = [];
+
 				data.forEach((item) => {
 					if (dates[index] === item.date?.toString()) {
-						if ((item.sla as number) < 1) {
-							const sla: number = parseFloat(
-								((item.sla as number) * 100).toFixed(2)
-							);
-							item.sla = sla;
-						} else {
-							const sla: number = (item.sla as number) * 100;
-							item.sla = sla;
-						}
+						const sla: number =
+							(item.sla as number) < 1
+								? parseFloat(((item.sla as number) * 100).toFixed(2))
+								: (item.sla as number) * 100;
+						item.sla = sla;
 						newSla.push(item);
 					}
 				});
@@ -119,45 +121,52 @@ class GenerateSLA {
 				if (index === dates.length - 1) {
 					newSla.forEach((item) => {
 						if ((item.sla as number) < 95.5 && (item.sla as number) > 0) {
-							const _underSla: object = {
+							underSla.push({
 								date: item.date,
 								sla: item.sla,
 								downtime: item.downtime_percent,
 								site: item.sites,
-							};
-							underSla.push(_underSla);
-						} 
+							});
+						}
 						if ((item.sla as number) === 0) {
-							const _downSla: object = {
+							downSla.push({
 								date: item.date,
 								sla: item.sla,
+								downtime: item.downtime_percent,
 								site: item.sites,
-							};
-							downSla.push(_downSla);
+							});
 						}
 					});
 				}
 
+				const results = await Promise.all(
+					downSla.map(async (item) => {
+						const weekDate = getPreviousWeeksDate(item.date);
+						console.log(weekDate, item.date, item.site);
+						const countDowntime = await slaRepository.getCountDowntime(
+							weekDate,
+							item.date,
+							item.site
+						);
+						item.downtime = countDowntime > 7 ? "Lebih Dari 7 Hari" : `${countDowntime} Hari`;
+						return item;
+					})
+				);
+				newDownSla.push(...results);
+
 				// add times description in underSla using format time
-				underSla.map((item) => {
-						const desc = generateTimeFormat(item.downtime);
-						// update item.downtime
-						Object.assign(
-							item,
-							{ downtime: desc }
-						)
-					}
-				)
+				underSla.forEach((item) => {
+					const desc = generateTimeFormat(item.downtime);
+					Object.assign(item, { downtime: desc });
+				});
 
 				const separateByDate: any[] = [];
-				// site have drop sla now but before not
 				newSla.forEach((item) => {
 					if (dates[index] === item.date?.toString()) {
 						separateByDate.push(item);
 					}
 				});
 
-				// bandingkan tanggal sebelumnya dengan tanggal sekarang
 				if (index > 0) {
 					const tempBefore: any[] = [];
 					data.forEach((item) => {
@@ -166,37 +175,34 @@ class GenerateSLA {
 						}
 					});
 
-					// compare
 					tempBefore.forEach((item) => {
 						separateByDate.forEach((element) => {
 							if (item.sites === element.sites) {
 								if (item.sla > 95.5 && element.sla > 95.5) {
 									// skip
 								} else if (item.sla > element.sla) {
-									const _temp: any = {
+									dropSla.push({
 										date: element.date,
 										site: item.sites,
 										slaBefore: item.sla,
 										slaNow: element.sla,
-									};
-									dropSla.push(_temp);
+									});
 								} else if (item.sla < element.sla) {
-									const _temp: any = {
+									upSla.push({
 										date: element.date,
 										site: item.sites,
 										slaBefore: item.sla,
 										slaNow: element.sla,
-									};
-									upSla.push(_temp);
+									});
 								}
 							}
 						});
 					});
 				}
-			});
+			}
 
 			const sla: any = {
-				downSla: downSla,
+				downSla: newDownSla,
 				underSla: underSla,
 				dropSla: dropSla,
 				upSla: upSla,
