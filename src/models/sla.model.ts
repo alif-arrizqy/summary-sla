@@ -7,4 +7,6 @@ export default interface Sla extends RowDataPacket {
   sla?: number;
   log_harian?: string;
   id?: number;
+	downtime?: number;
+	uptime?: number;
 }
