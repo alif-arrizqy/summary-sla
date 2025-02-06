@@ -75,12 +75,15 @@ class GenerateSLA {
 					);
 				}
 
+				// Calculate total site
+				const totalSite = new Set(avgSla.map((item) => item.sites)).size;
+
 				// message if valueDiff < 0 then SLA down, else SLA up
 				let message: string = "";
 				if (valueDiff < 0) {
-					message = `Terdapat penurunan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya`;
+					message = `Dear team, berikut SLA Sundaya (${totalSite} Site) pada tanggal ${dates[index]}\nTerdapat penurunan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya`;
 				} else {
-					message = `Terdapat kenaikan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya`;
+					message = `Dear team, berikut SLA Sundaya (${totalSite} Site) pada tanggal ${dates[index]}\nTerdapat kenaikan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya`;
 				};
 
 				// push to data
