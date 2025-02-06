@@ -126,6 +126,10 @@ class GenerateSLA {
 			const diffTalis: number[] = [];
 			const diffMix: number[] = [];
 			const diffJspro: number[] = [];
+			
+			const avgMonthlyTalis: any[] = [];
+			const avgMonthlyMix: any[] = [];
+			const avgMonthlyJspro: any[] = [];
 
 			let messageTalis: string = "";
 			let messageMix: string = "";
@@ -168,15 +172,34 @@ class GenerateSLA {
 			const valueDiffMix = calculateDifference(diffMix);
 			const valueDiffJspro = calculateDifference(diffJspro);
 
-			const generateMessage = (valueDiff: number, type: string) => {
-					return valueDiff < 0
-							? `Terdapat penurunan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya`
-							: `Terdapat kenaikan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya`;
+			// Get AVG Monthly
+			const resTalis = await SlaMonthlyReport.monthyReportByBattery({ endDate: dates[index], battery: "talis5" });
+			const resMix = await SlaMonthlyReport.monthyReportByBattery({ endDate: dates[index], battery: "mix" });
+			const resJspro = await SlaMonthlyReport.monthyReportByBattery({ endDate: dates[index], battery: "jspro" });
+
+			avgMonthlyTalis.push(resTalis);
+			avgMonthlyMix.push(resMix);
+			avgMonthlyJspro.push(resJspro);
+
+			// Calculate AVG Monthly
+			const calculateAverageMonthly = (avgMonthly: any[]) => {
+					const sum = avgMonthly.reduce((a, b) => a + (b.value as number), 0);
+					return (sum / avgMonthly.length).toFixed(2);
 			};
 
-			messageTalis = generateMessage(valueDiffTalis, "Talis");
-			messageMix = generateMessage(valueDiffMix, "Mix");
-			messageJspro = generateMessage(valueDiffJspro, "Jspro");
+			const monthlyTalis = calculateAverageMonthly(avgMonthlyTalis);
+			const monthlyMix = calculateAverageMonthly(avgMonthlyMix);
+			const MonthlyJspro = calculateAverageMonthly(avgMonthlyJspro);
+
+			const generateMessage = (valueDiff: number, avgSlaMonthly: string) => {
+					return valueDiff < 0
+							? `Terdapat penurunan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya\nSLA Average 01-${changeFormat(dates[1])} = ${avgSlaMonthly} %`
+							: `Terdapat kenaikan sebesar ${Math.abs(valueDiff)} % dari periode sebelumnya\nSLA Average 01-${changeFormat(dates[1])} = ${avgSlaMonthly} %`;
+			};
+
+			messageTalis = generateMessage(valueDiffTalis, monthlyTalis);
+			messageMix = generateMessage(valueDiffMix, monthlyMix);
+			messageJspro = generateMessage(valueDiffJspro, MonthlyJspro);
 
 			// Check if SLA < 95.5 in last date
 			if (index === dates.length - 1) {
@@ -225,28 +248,32 @@ class GenerateSLA {
 
 			// Add SLA Before and SLA Now in dropSla and upSla
 			const separateByDate = newSla.filter(item => dates[index] === item.date?.toString());
-
+			
 			if (index > 0) {
 				const tempBefore = data.filter(item => dates[index - 1] === item.date?.toString());
 
-				tempBefore.forEach(item => {
-					separateByDate.forEach(element => {
+				tempBefore.forEach((item) => {
+					separateByDate.forEach((element) => {
 						if (item.sites === element.sites) {
-							if ((item.sla ?? 0) > 95.5 && (element.sla ?? 0) > 95.5) return;
-							if ((item.sla ?? 0) > (element.sla ?? 0)) {
+							if (item.sla !== undefined && element.sla !== undefined) {
+								if (item.sla > 95.5 && element.sla > 95.5) return;
+								if (item.sla > element.sla) {
 									dropSla.push({
-											date: element.date,
-											site: item.sites,
-											slaBefore: item.sla,
-											slaNow: element.sla,
+										date: element.date,
+										site: item.sites,
+										slaBefore: item.sla,
+										slaNow: element.sla,
+										battery_version: item.battery_version,
 									});
-							} else if ((item.sla ?? 0) < (element.sla ?? 0)) {
+								} else if (item.sla < element.sla) {
 									upSla.push({
-											date: element.date,
-											site: item.sites,
-											slaBefore: (item.sla ?? 0),
-											slaNow: element.sla,
+										date: element.date,
+										site: item.sites,
+										slaBefore: item.sla,
+										slaNow: element.sla,
+										battery_version: item.battery_version,
 									});
+								}
 							}
 						}
 					});
@@ -258,9 +285,9 @@ class GenerateSLA {
 		const totalMix = new Set(totalSiteMix).size;
 		const totalJspro = new Set(totalSiteJspro).size;
 
-		siteCategories.talis5.message = `Sundaya TALIS (${totalTalis} Site) pada tanggal ${dates[1]} ${messageTalis}`;
-		siteCategories.mix.message = `Sundaya MIX (${totalMix} Site) pada tanggal ${dates[1]} ${messageMix}`;
-		siteCategories.jspro.message = `Sundaya JSPro (${totalJspro} Site) pada tanggal ${dates[1]} ${messageJspro}`;
+		siteCategories.talis5.message = `*Sundaya TALIS (${totalTalis} Site) pada tanggal ${changeFormat(dates[1])}*\n${messageTalis}\n`;
+		siteCategories.mix.message = `*Sundaya MIX (${totalMix} Site) pada tanggal ${changeFormat(dates[1])}*\n${messageMix}\n`;
+		siteCategories.jspro.message = `*Sundaya JSPro (${totalJspro} Site) pada tanggal ${changeFormat(dates[1])}*\n${messageJspro}\n`;
 
 		const filterByBatteryVersion = (array: any[], version: string) => array.filter(item => item.battery_version === version);
 
