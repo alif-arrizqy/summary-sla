@@ -24,4 +24,10 @@ const getPreviousWeeksDate = (date: string): string => {
 	return dateObj.toISOString().split("T")[0];
 }
 
-export { generateDates, generateTimeFormat, getPreviousWeeksDate };
+const changeFormat = (date: string): string => {
+	// from year-month-date to date/month/year
+	const dateArr = date.split("-");
+	return `${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`;
+}
+
+export { generateDates, generateTimeFormat, getPreviousWeeksDate, changeFormat };
