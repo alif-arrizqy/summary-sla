@@ -71,6 +71,84 @@ class SlaMonthlyReport implements BaseMonthlyReportRepository {
 		});
 	}
 
+	async monthyReportByBattery(searchParams: {
+		endDate: string;
+		battery: string;
+	}): Promise<Sla[]> {
+		// get month and year from endDate
+		const endDate = new Date(searchParams.endDate);
+		const month = (endDate.getMonth() + 1).toString().padStart(2, "0");
+		const year = endDate.getFullYear();
+		// create start date
+		const startDate: string = `${year}-${month}-01`;
+
+		// query sql
+		let query: string = `SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version
+			FROM detail_site AS site
+			INNER JOIN sites_sla_semeru AS sla
+			ON site.site_id = sla.site_id
+			WHERE sla.date BETWEEN '${startDate}' AND '${searchParams.endDate}'
+			AND site.battery_version = '${searchParams.battery}'
+			AND site.is_active = 1
+			ORDER BY sla.date ASC, site.battery_version DESC`;
+
+		return new Promise((resolve, reject) => {
+			connection.query<Sla[]>(query, (err, res) => {
+				if (err) reject(err);
+				else {
+					let data = JSON.parse(JSON.stringify(res));
+					let dailyAverages: number[] = [];
+
+					data.map((item: any) => {
+						// date format
+						const dateFromDb = new Date(item.date);
+						// convert to timezone local
+						const dateLocal = new Date(
+							dateFromDb.getTime() - dateFromDb.getTimezoneOffset() * 60000
+						);
+						item.date = dateLocal.toISOString().split("T")[0];
+						if ((item.sla as number) < 1) {
+							const sla: number = parseFloat(
+								((item.sla as number) * 100).toFixed(2)
+							);
+							item.sla = sla;
+						} else {
+							const sla: number = (item.sla as number) * 100;
+							item.sla = sla;
+						}
+					});
+
+					// Group data by date
+					const groupedData = data.reduce((acc: any, item: any) => {
+						if (!acc[item.date]) {
+							acc[item.date] = [];
+						}
+						acc[item.date].push(item);
+						return acc;
+					}, {});
+
+					// Calculate daily averages and push to dailyAverages array
+					for (const date in groupedData) {
+						const dailyData = groupedData[date];
+						const sumSla = dailyData.reduce((a: any, b: any) => a + b.sla, 0);
+						const avgSla = sumSla / dailyData.length;
+						dailyAverages.push(avgSla);
+					}
+
+					// Calculate final average
+					const finalSumSla = dailyAverages.reduce((a, b) => a + b, 0);
+					const finalAvgSla = (finalSumSla / dailyAverages.length).toFixed(2);
+
+					const sla: any = {
+						date: searchParams.endDate,
+						value: parseFloat(finalAvgSla),
+					};
+					resolve(sla);
+				}
+			});
+		});
+	}
+
 	async siteMonthlyReport(endDate: string, site: string): Promise<Sla[]> {
 		// get month and year from endDate
 		const endOfDate = new Date(endDate);
