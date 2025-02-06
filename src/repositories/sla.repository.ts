@@ -31,18 +31,14 @@ class SlaRepository implements BaseModelsSlaRepository {
 		endDate: string;
 	}): Promise<Sla[]> {
 		// query sql
-		let query: string =
-			"SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version " +
-			"FROM detail_site AS site " +
-			"INNER JOIN sites_sla_semeru AS sla " +
-			"ON site.site_id = sla.site_id " +
-			"WHERE sla.date BETWEEN '" +
-			searchParams.startDate +
-			"' AND '" +
-			searchParams.endDate +
-			"' AND site.battery_version IN ('talis5', 'mix', 'jspro') " +
-			"AND site.is_active = 1 " +
-			"ORDER BY sla.date ASC, site.battery_version DESC";
+		let query: string = `SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version
+			FROM detail_site AS site
+			INNER JOIN sites_sla_semeru AS sla
+			ON site.site_id = sla.site_id
+			WHERE sla.date BETWEEN '${searchParams.startDate}' AND '${searchParams.endDate}'
+			AND site.battery_version IN ('talis5', 'mix', 'jspro')
+			AND site.is_active = 1
+			ORDER BY sla.date ASC, site.battery_version DESC`;
 
 		// generate date from startDate to endDate
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
@@ -74,17 +70,15 @@ class SlaRepository implements BaseModelsSlaRepository {
 	}): Promise<Sla[]> {
 		// query sql
 		let query: string =
-			"SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version " +
-			"FROM detail_site AS site " +
-			"INNER JOIN sites_sla_semeru AS sla " +
-			"ON site.site_id = sla.site_id " +
-			"WHERE sla.date BETWEEN '" +
-			searchParams.startDate +
-			"' AND '" +
-			searchParams.endDate +
-			"' AND site.battery_version IN ('talis5', 'mix', 'jspro') " +
-			"AND site.is_active = 1 " +
-			"ORDER BY sla.date ASC, site.battery_version DESC";
+			`SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version
+			FROM detail_site AS site
+			INNER JOIN sites_sla_semeru AS sla
+			ON site.site_id = sla.site_id
+			WHERE sla.date BETWEEN '${searchParams.startDate}' AND '${searchParams.endDate}'
+			AND site.battery_version IN ('talis5', 'mix', 'jspro')
+			AND site.is_active = 1
+			ORDER BY sla.date ASC, site.battery_version DESC`;
+		
 		// generate date from startDate to endDate
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
 
@@ -138,18 +132,14 @@ class SlaRepository implements BaseModelsSlaRepository {
 		endDate: string;
 	}): Promise<Sla[]> {
 		// query sql
-		let query: string =
-			"SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version " +
-			"FROM detail_site AS site " +
-			"INNER JOIN sites_sla_semeru AS sla " +
-			"ON site.site_id = sla.site_id " +
-			"WHERE sla.date BETWEEN '" +
-			searchParams.startDate +
-			"' AND '" +
-			searchParams.endDate +
-			"' AND site.battery_version IN ('talis5', 'mix', 'jspro') " +
-			"AND site.is_active = 1 " +
-			"ORDER BY sla.date ASC, site.battery_version DESC";
+		let query: string = `SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version
+			FROM detail_site AS site
+			INNER JOIN sites_sla_semeru AS sla
+			ON site.site_id = sla.site_id
+			WHERE sla.date BETWEEN '${searchParams.startDate}' AND '${searchParams.endDate}'
+			AND site.battery_version IN ('talis5', 'mix', 'jspro')
+			AND site.is_active = 1
+			ORDER BY sla.date ASC, site.battery_version DESC`;
 
 		// generate date from startDate to endDate
 		const dates = generateDates(searchParams.startDate, searchParams.endDate);
