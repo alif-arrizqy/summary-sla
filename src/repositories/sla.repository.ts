@@ -132,7 +132,7 @@ class SlaRepository implements BaseModelsSlaRepository {
 		endDate: string;
 	}): Promise<Sla[]> {
 		// query sql
-		let query: string = `SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version
+		let query: string = `SELECT site.site_name, sla.date, sla.sites, sla.sla, sla.downtime_percent, site.battery_version, site.provinsi
 			FROM detail_site AS site
 			INNER JOIN sites_sla_semeru AS sla
 			ON site.site_id = sla.site_id
