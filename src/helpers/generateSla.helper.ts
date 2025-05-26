@@ -215,6 +215,7 @@ class GenerateSLA {
 										downtime: item.downtime_percent,
 										site: item.sites,
 										battery_version: item.battery_version,
+										province: item.provinsi,
 								});
 						}
 						if ((item.sla as number) === 0) {
@@ -224,6 +225,7 @@ class GenerateSLA {
 										downtime: item.downtime_percent,
 										site: item.sites,
 										battery_version: item.battery_version,
+										province: item.provinsi,
 								});
 						}
 				});
@@ -244,6 +246,27 @@ class GenerateSLA {
 			underSla.forEach(item => {
 					const desc = generateTimeFormat(item.downtime);
 					Object.assign(item, { downtime: desc });
+			});
+
+			// in underSLA Organize OM Mitra by provinsi
+			// PAPUA and PAPUA BARAT = OM LINDU
+			// MALUKU and MALUKU UTARA = OM ECOM
+			underSla.forEach(item => {
+				if (item.province === "PAPUA" || item.province === "PAPUA BARAT") {
+					item.mitra = "LINDU";
+				}
+				else if (item.province === "MALUKU" || item.province === "MALUKU UTARA") {
+					item.mitra = "ECOM";
+				}
+			});
+
+			newDownSla.forEach(item => {
+				if (item.province === "PAPUA" || item.province === "PAPUA BARAT") {
+					item.mitra = "LINDU";
+				}
+				else if (item.province === "MALUKU" || item.province === "MALUKU UTARA") {
+					item.mitra = "ECOM";
+				}
 			});
 
 			// Add SLA Before and SLA Now in dropSla and upSla
